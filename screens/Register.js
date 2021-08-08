@@ -5,11 +5,11 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 
 import { Color } from "../styles/Color";
 
-export default function Register() {
+export default function Register({ navigation }) {
   return (
     <KeyboardAwareScrollView style={styles.container}>
       <View>
-        <RegisterForm />
+        <RegisterForm navigation={navigation} />
       </View>
     </KeyboardAwareScrollView>
   );

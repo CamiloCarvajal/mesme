@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+// import NetInfo from "@react-native-community/netinfo";
 import { Button, Icon, Card, Avatar, Input } from "react-native-elements";
+
+import Modal from "./Modal";
 import { Color } from "../styles/Color";
 import { validateEmail } from "../utils/helpers";
+import { registerNewUser, updateProfile } from "../utils/DataAcces";
 
 // PENDING:
 // Split name and last name
@@ -18,6 +22,7 @@ export default function RegisterForm({ navigation }) {
   const [errorName, setErrorName] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
   const [errorConfirmPass, setErrorConfirmPass] = useState("");
+  const [isVisible, setIsVisible] = useState(false);
 
   const addInfo = (e, type) => {
     setUserData({ ...userData, [type]: e.nativeEvent.text });
@@ -31,10 +36,10 @@ export default function RegisterForm({ navigation }) {
     setErrorPassword("");
     setErrorConfirmPass("");
 
-    if (!userData.name || userData.name.trim() == "") {
+    if (!userData.displayName || userData.displayName.trim() == "") {
       isValid = false;
       setErrorName("Ingrese un nombre válido");
-    } else if (userData.name.length > 60) {
+    } else if (userData.displayName.length > 60) {
       isValid = false;
       setErrorName("Ingrese un nombre mas corto");
     }
@@ -70,12 +75,26 @@ export default function RegisterForm({ navigation }) {
     return isValid;
   }
 
-  function registerUser() {
-    setLoading(true);
+  async function registerUser() {
     if (!validateData()) {
       return;
     }
-    console.log("REGISTRANDO...");
+
+    setLoading(true);
+    const result = await registerNewUser(userData.email, userData.password);
+    if (!result.statusResponse) {
+      setLoading(false);
+      setIsVisible(true);
+      return;
+    }
+
+    const resultUpdate = await updateProfile(userData);
+    if (!resultUpdate.statusResponse) {
+      setLoading(false);
+      setIsVisible(true);
+      return;
+    }
+
     setLoading(false);
     navigation.goBack();
   }
@@ -98,7 +117,7 @@ export default function RegisterForm({ navigation }) {
           errorMessage={errorName}
           labelStyle={styles.labelStyle}
           inputStyle={styles.inputStyle}
-          onChange={(e) => addInfo(e, "name")}
+          onChange={(e) => addInfo(e, "displayName")}
         />
         <Input
           label="Teléfono"
@@ -184,6 +203,17 @@ export default function RegisterForm({ navigation }) {
           />
         </View>
       </Card>
+      <Modal isVisible={isVisible} setIsVisible={setIsVisible}>
+        <ModalMessage message="MOSTRANDO MODAL..." />
+      </Modal>
+    </View>
+  );
+}
+
+function ModalMessage({ message }) {
+  return (
+    <View>
+      <Text>{message}</Text>
     </View>
   );
 }
