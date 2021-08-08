@@ -49,12 +49,12 @@ export default function LoginForm({ navigation }) {
         <Button
           title="Ingresar"
           buttonStyle={{ backgroundColor: Color.redDark }}
-          onPress={logIn}
         />
         <Button
           title="Crear cuenta"
           type="clear"
           titleStyle={{ color: Color.redDark }}
+          onPress={logIn}
           icon={{
             type: "entypo",
             name: "squared-plus",
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     color: Color.gray,
   },
   cardContainer: {
-    elevation: 10,
+    elevation: 15,
     borderRadius: 5,
     width: "90%",
   },
@@ -117,6 +117,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10,
+    marginBottom: 10,
   },
 });
